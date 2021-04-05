@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import React, { useState } from 'react';
 import CREATE_TODO from './../graphql/mutations/createToDo';
 import { useMutation } from '@apollo/client';
-import GET_ALL_TODOS from "./../graphql/query/getAllToDos";
+import GET_ALL_TODOS from './../graphql/query/getAllToDos';
 
 export interface ToDoCreateDialogProps {
   open: boolean;
@@ -22,6 +22,7 @@ const TodoCreateDialog = ({ onClose, open, refetch }: ToDoCreateDialogProps) => 
   const handleSave = () => {
     createToDo({ variables: { content: newContent } });
     refetch();
+    setNewContent('');
     onClose();
   };
 
@@ -36,14 +37,19 @@ const TodoCreateDialog = ({ onClose, open, refetch }: ToDoCreateDialogProps) => 
             id='create-textfield'
             label='Text'
             type='text'
-            autoComplete="off"
+            autoComplete='off'
             fullWidth
             value={newContent}
             onChange={(val) => setNewContent(val.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => onClose()} color='primary'>
+          <Button
+            onClick={() => {
+              setNewContent('');
+              onClose();
+            }}
+            color='primary'>
             Cancel
           </Button>
           <Button onClick={() => handleSave()} color='primary'>

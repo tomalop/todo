@@ -45,7 +45,11 @@ const ToDoDialog = ({ onClose, open, todo, refetch }: ToDoDialogProps) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => onClose()} color='primary'>
+          <Button
+            onClick={() => {
+              onClose();
+            }}
+            color='primary'>
             Cancel
           </Button>
           <Button onClick={() => handleSave()} color='primary'>
