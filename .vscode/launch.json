@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "outputCapture": "std"
+        },
+
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Launch localhost",
+            "url": "http://localhost:2",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
