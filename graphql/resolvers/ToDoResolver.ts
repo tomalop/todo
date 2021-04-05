@@ -1,10 +1,10 @@
-import { Arg, ArgsType, InputType, Mutation, Query, Resolver } from 'type-graphql';
+import { inject, injectable } from 'inversify';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { v4 as uuidv4 } from 'uuid';
 import ToDo from '../../models/ToDo';
 import FileService from '../../services/FileService';
 import IFileService from '../../services/IFileService';
 import { UpdateTodoInput } from '../Inputs/UpdateToDoInput';
-import { v4 as uuidv4 } from 'uuid';
-import { inject, injectable } from 'inversify';
 import IToDoResolver from './IToDoResolver';
 
 // ? Je vlastně možné, aby fs fungoval asynchronně a tím pádem udělat async akce?

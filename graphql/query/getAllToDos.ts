@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 const GET_ALL_TODOS = gql`
-query {
+{
     getAllToDos {
       id
       content

@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import IAuditable from "../interfaces/IAuditable";
-
+import 'reflect-metadata';
 @ObjectType()
 export default class ToDo implements IAuditable {
     
