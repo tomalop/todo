@@ -7,8 +7,7 @@ import IFileService from '../../services/IFileService';
 import { UpdateTodoInput } from '../Inputs/UpdateToDoInput';
 import IToDoResolver from './IToDoResolver';
 
-// ? Je vlastně možné, aby fs fungoval asynchronně a tím pádem udělat async akce?
-// Todo Refakotorovat
+// ? Is it possible for async to work asynchronously (without lock-blockation, with single file), so we can make async actions?
 
 @injectable()
 @Resolver(ToDo)
@@ -19,28 +18,29 @@ export class ToDoResolver implements IToDoResolver {
     this.fileService = fileService;
   }
 
-  @Query(() => ToDo)
-  getToDo(@Arg('id') id: string) {
+  private readParseFile() {
     const file = this.fileService.read();
     const todos: ToDo[] = JSON.parse(file, this.dateTimeReviver);
+    return todos;
+  }
+
+  @Query(() => ToDo)
+  getToDo(@Arg('id') id: string) {
+    const todos: ToDo[] = this.readParseFile();
     const todo = todos.find((t) => t.id === id);
-    // if (!todo) return undefined;
     if (todo === undefined) throw new Error(`Get operation failed. Object with id: ${id} was not found`);
     return todo;
   }
 
   @Query(() => [ToDo])
   getAllToDos() {
-    const file = this.fileService.read();
-    const todos: ToDo[] = JSON.parse(file, this.dateTimeReviver);
-    // if (todos.length === 0) throw new Error(`GetAll operation failed. No object found.`);
+    const todos: ToDo[] = this.readParseFile();
     return todos;
   }
 
   @Mutation(() => ToDo)
   createToDo(@Arg('content', { nullable: true, defaultValue: '' }) content: string) {
-    const file = this.fileService.read();
-    const todos: ToDo[] = JSON.parse(file, this.dateTimeReviver);
+    const todos: ToDo[] = this.readParseFile();
     todos.unshift({ id: uuidv4(), content, created: new Date(), lastModified: new Date() });
     this.fileService.write(JSON.stringify(todos));
     return todos[0];
@@ -48,8 +48,7 @@ export class ToDoResolver implements IToDoResolver {
 
   @Mutation(() => ToDo)
   updateToDo(@Arg('updateTodoInput') newToDoData: UpdateTodoInput) {
-    const file = this.fileService.read();
-    let todos: ToDo[] = JSON.parse(file, this.dateTimeReviver);
+    const todos: ToDo[] = this.readParseFile();
     const index = todos.findIndex((t) => t.id === newToDoData.id);
     if (index === -1) throw new Error(`Update operation failed. Object with id: ${newToDoData.id} was not found`);
     todos[index].content = newToDoData.content;
@@ -60,12 +59,8 @@ export class ToDoResolver implements IToDoResolver {
 
   @Mutation(() => String)
   deleteToDo(@Arg('id') id: string) {
-    const file = this.fileService.read();
-    let todos: ToDo[] = JSON.parse(file, this.dateTimeReviver);
+    let todos: ToDo[] = this.readParseFile();
     todos = todos.filter((t) => t.id !== id);
-    // const index = todos.findIndex(t => t.id === id);
-    // if(index === -1) throw new Error(`Delete operation failed. Object with id: ${id} was not found`);
-    // todos.splice(index);
     this.fileService.write(JSON.stringify(todos));
     return id;
   }

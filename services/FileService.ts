@@ -1,4 +1,3 @@
-import { node, string } from 'prop-types';
 import IFileService from './IFileService';
 import fileSystem from 'fs';
 import { injectable } from 'inversify';
