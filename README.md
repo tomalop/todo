@@ -1,11 +1,11 @@
 # ToDo
 
 ## Release
-To build your own
+To build your own and use it
 ```
 yarn build
+yarn start
 ```
-
 
 ## Development
 Download the latest changes on the main branch

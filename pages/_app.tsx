@@ -28,17 +28,25 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
 // Utils
 import theme from '../utils/theme';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client';
-import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks'
+import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloProvider as ApolloHooksProvider, ApolloClient as ApolloHooksClient, createHttpLink as hookCreateHttpLink, InMemoryCache as hookInMemoryCache } from '@apollo/react-hooks';
 
 const httpLink = createHttpLink({
+  uri: 'http://localhost:2/api/graphql',
+});
+
+const HookHttpLink = hookCreateHttpLink({
   uri: 'http://localhost:2/api/graphql',
 });
 
 const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),
+});
+
+const hookClient = new ApolloHooksClient({
+  link: HookHttpLink,
+  cache: new hookInMemoryCache(),
 });
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
@@ -53,15 +61,15 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <ApolloProvider client={client}>
-      <ApolloHooksProvider client={client}>
-        <Head>
-          <title>Todo App</title>
-          <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
-        </Head>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
+        <ApolloHooksProvider client={hookClient}>
+          <Head>
+            <title>Todo App</title>
+            <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
+          </Head>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
         </ApolloHooksProvider>
       </ApolloProvider>
     </>

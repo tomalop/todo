@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { ApolloError, useMutation, useQuery } from '@apollo/react-hooks';
-import { Button, TableCell, Table, TableBody, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import { ApolloError, useMutation } from '@apollo/react-hooks';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import GET_ALL_TODOS from '../graphql/query/getAllToDos';
+import React, { useState } from 'react';
 import ToDo from '../models/ToDo';
 import DELETE_TODO from './../graphql/mutations/deleteToDo';
 import ToDoDialog from './todoDialog';
+import GET_ALL_TODOS from './../graphql/query/getAllToDos';
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+  },
+  formButton: {
+    marginRight: 8,
   },
 });
 
@@ -28,10 +31,10 @@ const ToDoTable = ({ loading, error, data, refetch }: ToDoTableProps) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const [deleteToDo] = useMutation(DELETE_TODO);
+  const [deleteToDo] = useMutation(DELETE_TODO, { refetchQueries: [{ query: GET_ALL_TODOS }], awaitRefetchQueries: true });
 
   const handleDelete = (id: string) => {
-    deleteToDo({ variables: { id }})
+    deleteToDo({ variables: { id } });
     refetch();
   };
 
@@ -57,10 +60,10 @@ const ToDoTable = ({ loading, error, data, refetch }: ToDoTableProps) => {
               <TableCell align='right'>{todo.lastModified.toString()}</TableCell>
               <TableCell align='right'>{todo.created.toString()}</TableCell>
               <TableCell align='right'>
-                <Button variant='contained' color='secondary' onClick={() => setOpen(true)}>
+                <Button className={classes.formButton} variant='contained' color='secondary' onClick={() => setOpen(true)}>
                   Edit
                 </Button>
-                <Button variant='contained' color='secondary' onClick={() => handleDelete(todo.id) }>
+                <Button variant='contained' color='secondary' onClick={() => handleDelete(todo.id)}>
                   Delete
                 </Button>
                 <ToDoDialog todo={todo} open={open} onClose={() => setOpen(false)} refetch={refetch} />
